@@ -6,9 +6,9 @@ plugins {
     id("com.github.johnrengelman.shadow") version ("8.1.1")
 }
 
-group = "com.laudynetwork.template"
+group = "com.laudynetwork.manhunt"
 version = "1.0-SNAPSHOT"
-description = "LaudyNetwork Game Template"
+description = "LaudyNetwork Game Manhunt"
 
 repositories {
     mavenLocal()
@@ -82,7 +82,7 @@ tasks {
     reobfJar {
         // This is an example of how you might change the output location for reobfJar. It's recommended not to do this
         // for a variety of reasons, however it's asked frequently enough that an example of how to do it is included here.
-        outputJar.set(layout.buildDirectory.file("dist/Template.jar"))
+        outputJar.set(layout.buildDirectory.file("dist/Manhunt.jar"))
     }
 }
 
