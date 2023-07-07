@@ -45,3 +45,5 @@ bin/
 /.idea/inspectionProfiles/Project_Default.xml
 /.idea/uiDesigner.xml
 /.idea/vcs.xml
+
+/src/main/resources/translations
