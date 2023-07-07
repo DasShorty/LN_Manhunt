@@ -45,6 +45,8 @@ dependencies {
     compileOnly("com.laudynetwork:database:latest")
     compileOnly("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
+
+    implementation("com.laudynetwork:gameengine:latest")
 }
 tasks {
     // Configure reobfJar to run when invoking the build task
@@ -55,13 +57,7 @@ tasks {
     shadowJar {
         dependencies {
             exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
-//            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0"))
-//            exclude(dependency("com.laudynetwork:networkutils:latest"))
-//            exclude(dependency("com.laudynetwork:database:latest"))
-//            exclude(dependency("dev.sergiferry:playernpc:2023.4"))
-//            exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
-//            exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
-//            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.5.0"))
+            exclude(dependency("com.laudynetwork:gameengine:latest"))
         }
     }
 
@@ -86,12 +82,10 @@ tasks {
     }
 }
 
-// Uncommit to activate translations
-
-//tasks.register("translations") {
-//    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
-//    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
-//}
+tasks.register("translations") {
+    downloadFile(System.getenv("TOLGEE_TOKEN_PLUGIN"), "own")
+    downloadFile(System.getenv("TOLGEE_TOKEN_GENERAL"), "plugins")
+}
 
 fun downloadFile(token: String, dir: String) {
     downloadLink(token).forEach {
