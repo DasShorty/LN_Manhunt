@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="539d5542-18fe-4e73-b568-d306071eddc4" name="LN">
+        <fileTransfer rootFolder="/home/simplecloud/templates/Manhunt/plugins" accessType="SFTP" host="89.163.129.221" port="22" sshConfigId="a374c322-6c94-4df3-ae25-57c674d8821a" sshConfig="LN">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
