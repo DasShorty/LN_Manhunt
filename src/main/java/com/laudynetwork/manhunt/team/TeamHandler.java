@@ -1,5 +1,6 @@
 package com.laudynetwork.manhunt.team;
 
+import com.laudynetwork.gameengine.game.GameTeamHandler;
 import com.laudynetwork.manhunt.Manhunt;
 import lombok.Getter;
 import lombok.val;
@@ -46,11 +47,11 @@ public class TeamHandler {
         this.teams.put(teamId, uuids);
     }
 
-    public void playerTeam(String teamId, Player player) {
+    public void playerTeam(String teamId, Player player, GameTeamHandler gameTeamHandler) {
 
         switch (teamId) {
-            case "hunters" -> toTeam(teamId, player, this.huntersData);
-            case "man" -> toTeam(teamId, player, this.manData);
+            case "hunters" -> toTeam(teamId, player, this.huntersData, gameTeamHandler);
+            case "man" -> toTeam(teamId, player, this.manData, gameTeamHandler);
             default -> {
                 throw new IllegalArgumentException("Invalid teamId (" + teamId + ")!");
             }
@@ -58,11 +59,11 @@ public class TeamHandler {
 
     }
 
-    private void toTeam(String teamId, Player player, TeamData data) {
+    private void toTeam(String teamId, Player player, TeamData data, GameTeamHandler gameTeamHandler) {
         player.getPersistentDataContainer().set(this.gameRoleKey, PersistentDataType.STRING, teamId);
         createDefault(teamId);
         addToTeam(player, teamId);
-        this.teamHandler.team(teamId, player.getScoreboard(), data.prefix(), data.suffix(), data.color());
+        gameTeamHandler.team(teamId, player.getScoreboard(), data.prefix(), data.suffix(), data.color());
     }
 
 }
