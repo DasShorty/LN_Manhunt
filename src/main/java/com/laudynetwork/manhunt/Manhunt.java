@@ -1,6 +1,7 @@
 package com.laudynetwork.manhunt;
 
 import com.laudynetwork.gameengine.game.backend.GameDataHandler;
+import com.laudynetwork.manhunt.game.WaitingListeners;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import lombok.Getter;
 import lombok.val;
@@ -28,9 +29,8 @@ public class Manhunt extends JavaPlugin {
 
         val pm = Bukkit.getPluginManager();
         pm.registerEvents(this.game, this);
+        pm.registerEvents(new WaitingListeners(this.game), this);
         this.game.onLoad();
-
-
     }
 
     @Override
