@@ -1,5 +1,6 @@
 package com.laudynetwork.manhunt.game.waiting.items.impl;
 
+import com.laudynetwork.gameengine.game.GameTeamHandler;
 import com.laudynetwork.manhunt.Manhunt;
 import com.laudynetwork.manhunt.game.waiting.items.WaitingItem;
 import com.laudynetwork.manhunt.game.waiting.items.impl.menu.MenuUI;
@@ -17,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class MenuItem implements WaitingItem {
 
     private final TeamHandler teamHandler;
+    private final GameTeamHandler gameTeamHandler;
 
     @Override
     public int slot() {
@@ -38,7 +40,7 @@ public class MenuItem implements WaitingItem {
 
         player.setCooldown(Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE, 20 * 2);
 
-        Manhunt.getINSTANCE().getGuiHandler().open(player, new MenuUI(player, Component.text("Menu"), this.teamHandler));
+        Manhunt.getINSTANCE().getGuiHandler().open(player, new MenuUI(player, Component.text("Menu"), this.teamHandler, this.gameTeamHandler));
 
 
     }

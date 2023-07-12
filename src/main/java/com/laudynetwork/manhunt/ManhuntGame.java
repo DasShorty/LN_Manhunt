@@ -119,7 +119,7 @@ public class ManhuntGame extends Game {
     }
 
     private void addHotBarItems(Player player) {
-        this.waitingItemHandler.addItemToPlayer(player, new MenuItem(this.teamHandler));
+        this.waitingItemHandler.addItemToPlayer(player, new MenuItem(this.teamHandler, this.gameTeamHandler));
 
         this.waitingItemHandler.reloadPlayerItems(player);
     }
