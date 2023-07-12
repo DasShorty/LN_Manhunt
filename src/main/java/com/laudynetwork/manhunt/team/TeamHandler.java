@@ -62,7 +62,19 @@ public class TeamHandler {
         this.teams.put(teamId, uuids);
     }
 
+    private void removeFromTeam(Player player, String teamId) {
+        val uuids = new ArrayList<>(this.teams.get(teamId));
+        uuids.remove(player.getUniqueId());
+        this.teams.put(teamId, uuids);
+    }
+
     public void playerTeam(String teamId, Player player, GameTeamHandler gameTeamHandler) {
+
+        if (isPlayerMan(player.getUniqueId()))
+            fromTeam(player, "man", gameTeamHandler);
+
+        if (isPlayerHunter(player.getUniqueId()))
+            fromTeam(player, "hunters", gameTeamHandler);
 
         switch (teamId) {
             case "hunters" -> toTeam(teamId, player, this.huntersData, gameTeamHandler);
@@ -71,6 +83,20 @@ public class TeamHandler {
                 throw new IllegalArgumentException("Invalid teamId (" + teamId + ")!");
             }
         }
+
+    }
+
+    private void fromTeam(Player player, String teamId, GameTeamHandler gameTeamHandler) {
+        player.getPersistentDataContainer().remove(this.gameRoleKey);
+        removeFromTeam(player, teamId);
+
+        player.setGlowing(false);
+
+        val team = gameTeamHandler.team(teamId);
+        if (team == null)
+            return;
+
+        team.removePlayer(player);
 
     }
 
@@ -84,6 +110,12 @@ public class TeamHandler {
         createDefault(teamId);
         addToTeam(player, teamId);
         gameTeamHandler.team(teamId, player.getScoreboard(), data.prefix(), data.suffix(), data.color());
+
+        val team = gameTeamHandler.team(teamId);
+
+        if (team == null)
+            return;
+        team.addPlayer(player);
     }
 
 }
