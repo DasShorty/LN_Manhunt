@@ -5,6 +5,7 @@ import com.laudynetwork.manhunt.game.waiting.WaitingListeners;
 import com.laudynetwork.manhunt.game.waiting.items.WaitingItemHandler;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
+import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import lombok.Getter;
 import lombok.val;
 import org.bukkit.Bukkit;
@@ -30,6 +31,13 @@ public class Manhunt extends JavaPlugin {
         this.guiHandler = Bukkit.getServicesManager().getRegistration(GUIHandler.class).getProvider();
 
         val dataHandler = Bukkit.getServicesManager().getRegistration(GameDataHandler.class).getProvider();
+
+        val tablistManager = Bukkit.getServicesManager().getRegistration(TablistManager.class).getProvider();
+
+        tablistManager.setTablist((scoreboard, player) -> {
+
+        });
+
         game = new ManhuntGame();
 
         val pm = Bukkit.getPluginManager();
