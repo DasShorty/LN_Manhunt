@@ -10,10 +10,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamHandler {
 
@@ -31,7 +28,25 @@ public class TeamHandler {
     }
 
     public boolean isManTeamEmpty() {
+        if (!this.teams.containsKey("man"))
+            return true;
         return this.teams.get("man").isEmpty();
+    }
+
+    public boolean isPlayerMan(UUID uuid) {
+
+        if (!this.teams.containsKey("man"))
+            return false;
+
+        return this.teams.get("man").contains(uuid);
+    }
+
+    public boolean isPlayerHunter(UUID uuid) {
+
+        if (!this.teams.containsKey("hunters"))
+            return false;
+
+        return this.teams.get("hunters").contains(uuid);
     }
 
     private void createDefault(String teamId) {
@@ -42,7 +57,7 @@ public class TeamHandler {
     }
 
     private void addToTeam(Player player, String teamId) {
-        val uuids = this.teams.get(teamId);
+        val uuids = new ArrayList<>(this.teams.get(teamId));
         uuids.add(player.getUniqueId());
         this.teams.put(teamId, uuids);
     }
@@ -60,6 +75,11 @@ public class TeamHandler {
     }
 
     private void toTeam(String teamId, Player player, TeamData data, GameTeamHandler gameTeamHandler) {
+
+        if (teamId.equalsIgnoreCase("man"))
+            player.setGlowing(true);
+
+
         player.getPersistentDataContainer().set(this.gameRoleKey, PersistentDataType.STRING, teamId);
         createDefault(teamId);
         addToTeam(player, teamId);
