@@ -1,11 +1,14 @@
-package com.laudynetwork.manhunt.game;
+package com.laudynetwork.manhunt.game.waiting;
 
 import com.laudynetwork.gameengine.game.gamestate.GameState;
 import com.laudynetwork.manhunt.ManhuntGame;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -33,10 +36,27 @@ public class WaitingListeners implements Listener {
 
         val role = dataContainer.get(this.game.getTeamHandler().getGameRoleKey(), PersistentDataType.STRING);
 
-        switch (role.toLowerCase()) {
-            case "hunters" -> event.setCancelled(true);
-            case "man" -> event.setCancelled(false);
-        }
+        val from = event.getFrom();
+        val to = event.getTo();
+        assert role != null;
 
+        if (player.getGameMode() == GameMode.CREATIVE)
+            return;
+
+        if ((from.getX() != to.getX() || from.getZ() != from.getZ()) && role.equalsIgnoreCase("hunters"))
+            event.setCancelled(true);
+
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+
+        if (isNotWaiting())
+            return;
+
+        if (!(event.getEntity() instanceof Player))
+            return;
+
+        event.setCancelled(true);
     }
 }
