@@ -1,7 +1,6 @@
 package com.laudynetwork.manhunt;
 
 import com.laudynetwork.gameengine.game.backend.GameDataHandler;
-import com.laudynetwork.manhunt.game.waiting.WaitingListeners;
 import com.laudynetwork.manhunt.game.waiting.items.WaitingItemHandler;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
@@ -46,7 +45,6 @@ public class Manhunt extends JavaPlugin {
         pm.registerEvents(itemHandler, this);
 
         pm.registerEvents(this.game, this);
-        pm.registerEvents(new WaitingListeners(this.game), this);
         this.game.onLoad();
     }
 
