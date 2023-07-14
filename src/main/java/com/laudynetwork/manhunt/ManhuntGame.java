@@ -2,6 +2,8 @@ package com.laudynetwork.manhunt;
 
 import com.laudynetwork.gameengine.api.animation.AnimationController;
 import com.laudynetwork.gameengine.api.animation.impl.ActionBarAnimation;
+import com.laudynetwork.gameengine.api.animation.impl.TitleAnimation;
+import com.laudynetwork.gameengine.api.listener.GameListeners;
 import com.laudynetwork.gameengine.game.Game;
 import com.laudynetwork.gameengine.game.GameType;
 import com.laudynetwork.gameengine.game.gamestate.GameState;
@@ -11,18 +13,30 @@ import com.laudynetwork.manhunt.team.TeamHandler;
 import com.laudynetwork.networkutils.api.MongoDatabase;
 import com.laudynetwork.networkutils.api.messanger.api.MessageAPI;
 import com.laudynetwork.networkutils.api.player.NetworkPlayer;
+import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import lombok.Getter;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.persistence.PersistentDataType;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManhuntGame extends Game {
 
@@ -48,6 +62,61 @@ public class ManhuntGame extends Game {
 
     @Override
     public boolean onLoad() {
+
+        GameListeners.listen(BlockBreakEvent.class, EventPriority.NORMAL, false, (event) -> {
+
+            if (getCurrentState() == GameState.WAITING)
+                event.setCancelled(true);
+
+        });
+
+        GameListeners.listen(BlockPlaceEvent.class, EventPriority.NORMAL, false, (event) -> {
+
+            if (getCurrentState() == GameState.WAITING)
+                event.setCancelled(true);
+
+        });
+
+        GameListeners.listen(FoodLevelChangeEvent.class, EventPriority.NORMAL, false, (event) -> {
+
+            if (getCurrentState() == GameState.WAITING)
+                event.setCancelled(true);
+
+        });
+
+        GameListeners.listen(EntityDamageEvent.class, EventPriority.NORMAL, false, (event) -> {
+
+            if (getCurrentState() == GameState.WAITING)
+                event.setCancelled(true);
+
+        });
+
+        GameListeners.listen(PlayerMoveEvent.class, EventPriority.NORMAL, false, (event) -> {
+
+            if (getCurrentState() != GameState.WAITING)
+                return;
+
+            val player = event.getPlayer();
+            val dataContainer = player.getPersistentDataContainer();
+            if (!dataContainer.has(this.getTeamHandler().getGameRoleKey())) {
+                event.setCancelled(true);
+                return;
+            }
+
+            val role = dataContainer.get(this.getTeamHandler().getGameRoleKey(), PersistentDataType.STRING);
+
+            val from = event.getFrom();
+            val to = event.getTo();
+            assert role != null;
+
+            if (player.getGameMode() == GameMode.CREATIVE)
+                return;
+
+            if ((from.getX() != to.getX() || from.getZ() != from.getZ()) && role.equalsIgnoreCase("hunters"))
+                event.setCancelled(true);
+
+        });
+
         animationController.getActionBarAnimations().add(new ActionBarAnimation(0, 40) {
             @Override
             public Component onRender() {
@@ -81,6 +150,49 @@ public class ManhuntGame extends Game {
 
     @Override
     public boolean onStart() {
+
+        if (Bukkit.getOnlinePlayers().size() < 2)
+            return false;
+
+        setCurrentState(GameState.STARTING);
+
+        val counter = new AtomicInteger(4);
+        final int[] current = {counter.get()};
+        animationController.getTitleAnimations().add(new TitleAnimation(20, 20) {
+            @Override
+            public Title.Times times() {
+                return Title.Times.times(Duration.ofSeconds(0L),Duration.ofSeconds(3L),Duration.ofSeconds(2L));
+            }
+
+            @Override
+            public Component title() {
+                return Component.text(current[0]);
+            }
+
+            @Override
+            public Component subTitle() {
+                return Component.empty();
+            }
+
+            @Override
+            public List<? extends Player> sendTo() {
+
+                if (current[0] == 1) {
+                    cancel();
+                    setCurrentState(GameState.RUNNING);
+                }
+
+                current[0] = counter.decrementAndGet();
+
+                return Bukkit.getOnlinePlayers().stream().toList();
+            }
+        });
+
+        Bukkit.getOnlinePlayers().forEach(player ->  {
+            player.setGlowing(false);
+            player.sendMessage(Component.text("Das Spiel startet nun!"));
+
+        });
 
         return true;
     }
@@ -119,7 +231,7 @@ public class ManhuntGame extends Game {
     }
 
     private void addHotBarItems(Player player) {
-        this.waitingItemHandler.addItemToPlayer(player, new MenuItem(this.teamHandler, this.gameTeamHandler));
+        this.waitingItemHandler.addItemToPlayer(player, new MenuItem(this.teamHandler, this.gameTeamHandler, this));
 
         this.waitingItemHandler.reloadPlayerItems(player);
     }

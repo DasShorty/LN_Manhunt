@@ -2,6 +2,7 @@ package com.laudynetwork.manhunt.game.waiting.items.impl.menu;
 
 import com.laudynetwork.gameengine.game.GameTeamHandler;
 import com.laudynetwork.manhunt.Manhunt;
+import com.laudynetwork.manhunt.ManhuntGame;
 import com.laudynetwork.manhunt.game.waiting.items.impl.menu.role.RoleUI;
 import com.laudynetwork.manhunt.team.TeamHandler;
 import com.laudynetwork.networkutils.api.gui.GUI;
@@ -18,18 +19,28 @@ public class MenuUI extends GUI {
 
     private final TeamHandler teamHandler;
     private final GameTeamHandler gameTeamHandler;
+    private final ManhuntGame game;
 
-    public MenuUI(Player player, Component displayName, TeamHandler teamHandler, GameTeamHandler gameTeamHandler) {
+    public MenuUI(Player player, Component displayName, TeamHandler teamHandler, GameTeamHandler gameTeamHandler, ManhuntGame game) {
         super(player, displayName, 27);
         this.teamHandler = teamHandler;
         this.gameTeamHandler = gameTeamHandler;
+        this.game = game;
     }
 
     @Override
     public void generateGUI(Player player) {
 
         set(12, new ItemBuilder(Material.CLOCK)
-                .displayName(Component.text("Spiel starten")));
+                .displayName(Component.text("Spiel starten")), (clickedPlayer, itemStack, clickType) -> {
+
+            if (game.onStart())
+                return GUIItem.GUIAction.CLOSE;
+
+            clickedPlayer.sendMessage(Component.text("Es werden mehr Spieler gebraucht!"));
+
+            return GUIItem.GUIAction.CANCEL;
+        });
 
         set(14, new ItemBuilder(Material.LECTERN)
                 .displayName(Component.text("Rollen")), (clickedPlayer, itemStack, clickType) -> {
