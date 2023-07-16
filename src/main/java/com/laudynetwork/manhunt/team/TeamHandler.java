@@ -33,6 +33,15 @@ public class TeamHandler {
         return teams.get("hunters").size();
     }
 
+    public void removeMan(UUID uuid) {
+        if (!this.teams.containsKey("man"))
+            return;
+
+        val uuids = this.teams.get("man");
+        uuids.remove(uuid);
+        teams.put("man", uuids);
+    }
+
     public boolean isManTeamEmpty() {
         if (!this.teams.containsKey("man"))
             return true;

@@ -18,7 +18,7 @@ public class WaitingBarAnimation extends ActionBarAnimation {
     private final MongoDatabase database = Bukkit.getServicesManager().getRegistration(MongoDatabase.class).getProvider();
 
     public WaitingBarAnimation() {
-        super(20, 3*20);
+        super(20, 2*20);
     }
 
     @Override

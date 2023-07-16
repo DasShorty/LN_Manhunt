@@ -10,6 +10,8 @@ import com.laudynetwork.networkutils.api.gui.GUI;
 import com.laudynetwork.networkutils.api.gui.GUIItem;
 import com.laudynetwork.networkutils.api.gui.event.CloseReason;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
+import com.laudynetwork.networkutils.api.player.NetworkPlayer;
+import lombok.val;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -35,9 +37,20 @@ public class MenuUI extends GUI {
         set(12, new ItemBuilder(Material.CLOCK)
                 .displayName(Component.text("Spiel starten")), (clickedPlayer, itemStack, clickType) -> {
 
-            game.loadPhase(GameState.STARTING);
+            val language = new NetworkPlayer(game.getDatabase(), clickedPlayer.getUniqueId()).getLanguage();
 
-            clickedPlayer.sendMessage(Component.text("Es werden mehr Spieler gebraucht!"));
+            if (teamHandler.isPlayerHunter(clickedPlayer.getUniqueId())) {
+                clickedPlayer.playSound(Sound.sound(Key.key("minecraft:entity.villager.no"), Sound.Source.MASTER, 30f, 1f));
+                clickedPlayer.sendMessage(game.getMsgApi().getMessage(language, "command.missing.permission"));
+                return GUIItem.GUIAction.CLOSE;
+            }
+
+            if (!game.phaseRequirement(GameState.STARTING)) {
+                clickedPlayer.sendMessage(game.getMsgApi().getMessage(language, "game.requirement.starting"));
+                return GUIItem.GUIAction.CLOSE;
+            }
+
+            game.loadPhase(GameState.STARTING);
 
             return GUIItem.GUIAction.CANCEL;
         });
@@ -45,8 +58,11 @@ public class MenuUI extends GUI {
         set(14, new ItemBuilder(Material.LECTERN)
                 .displayName(Component.text("Rollen")), (clickedPlayer, itemStack, clickType) -> {
 
+            val language = new NetworkPlayer(game.getDatabase(), clickedPlayer.getUniqueId()).getLanguage();
+
             if (this.teamHandler.isPlayerHunter(clickedPlayer.getUniqueId())) {
                 clickedPlayer.playSound(Sound.sound(Key.key("minecraft:entity.villager.no"), Sound.Source.MASTER, 30f, 1f));
+                clickedPlayer.sendMessage(game.getMsgApi().getMessage(language, "command.missing.permission"));
                 return GUIItem.GUIAction.CANCEL;
             }
 

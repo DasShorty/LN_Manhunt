@@ -5,6 +5,7 @@ import com.laudynetwork.gameengine.api.listener.GameListeners;
 import com.laudynetwork.gameengine.game.Game;
 import com.laudynetwork.gameengine.game.GameType;
 import com.laudynetwork.gameengine.game.gamestate.GameState;
+import com.laudynetwork.manhunt.game.ending.EndingPhase;
 import com.laudynetwork.manhunt.game.running.RunningPhase;
 import com.laudynetwork.manhunt.game.starting.StartingPhase;
 import com.laudynetwork.manhunt.game.waiting.WaitingPhase;
@@ -55,6 +56,7 @@ public class ManhuntGame extends Game {
         registerPhase(new WaitingPhase(this));
         registerPhase(new StartingPhase(this));
         registerPhase(new RunningPhase(this));
+        registerPhase(new EndingPhase(this));
 
         loadPhase(GameState.WAITING);
 
@@ -77,6 +79,7 @@ public class ManhuntGame extends Game {
             }
 
             addHotBarItems(player);
+
         });
 
         GameListeners.listen(PlayerQuitEvent.class, EventPriority.NORMAL, true, event -> {
