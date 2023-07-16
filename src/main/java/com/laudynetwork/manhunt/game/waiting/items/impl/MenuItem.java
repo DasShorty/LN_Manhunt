@@ -1,6 +1,7 @@
 package com.laudynetwork.manhunt.game.waiting.items.impl;
 
 import com.laudynetwork.gameengine.game.GameTeamHandler;
+import com.laudynetwork.gameengine.game.gamestate.GameState;
 import com.laudynetwork.manhunt.Manhunt;
 import com.laudynetwork.manhunt.ManhuntGame;
 import com.laudynetwork.manhunt.game.waiting.items.WaitingItem;
@@ -38,6 +39,9 @@ public class MenuItem implements WaitingItem {
         val player = event.getPlayer();
 
         if (player.hasCooldown(Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE))
+            return;
+
+        if (game.getCurrentState() != GameState.WAITING)
             return;
 
         player.setCooldown(Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE, 20 * 2);

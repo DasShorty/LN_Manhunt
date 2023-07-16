@@ -27,6 +27,12 @@ public class TeamHandler {
         this.manData = new TeamData("man", Component.empty(), Component.empty(), NamedTextColor.GREEN);
     }
 
+    public int getHuntersCount() {
+        if (!teams.containsKey("hunters"))
+            return 0;
+        return teams.get("hunters").size();
+    }
+
     public boolean isManTeamEmpty() {
         if (!this.teams.containsKey("man"))
             return true;

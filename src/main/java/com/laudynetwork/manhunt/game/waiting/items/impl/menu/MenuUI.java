@@ -1,6 +1,7 @@
 package com.laudynetwork.manhunt.game.waiting.items.impl.menu;
 
 import com.laudynetwork.gameengine.game.GameTeamHandler;
+import com.laudynetwork.gameengine.game.gamestate.GameState;
 import com.laudynetwork.manhunt.Manhunt;
 import com.laudynetwork.manhunt.ManhuntGame;
 import com.laudynetwork.manhunt.game.waiting.items.impl.menu.role.RoleUI;
@@ -34,8 +35,7 @@ public class MenuUI extends GUI {
         set(12, new ItemBuilder(Material.CLOCK)
                 .displayName(Component.text("Spiel starten")), (clickedPlayer, itemStack, clickType) -> {
 
-            if (game.onStart())
-                return GUIItem.GUIAction.CLOSE;
+            game.loadPhase(GameState.STARTING);
 
             clickedPlayer.sendMessage(Component.text("Es werden mehr Spieler gebraucht!"));
 
