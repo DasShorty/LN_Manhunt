@@ -86,7 +86,7 @@ public class ManhuntGame extends Game {
             val player = event.getPlayer();
             val language = new NetworkPlayer(this.database, player.getUniqueId()).getLanguage();
             event.quitMessage(Component.empty());
-            broadCast("game.left", language, Placeholder.unparsed("player", player.getName()));
+            broadCast("game.leave", language, Placeholder.unparsed("player", player.getName()));
         });
         return true;
     }
@@ -101,6 +101,12 @@ public class ManhuntGame extends Game {
                 bool.complete(false);
                 return;
             }
+
+            if (man.getLocation().getWorld().getUID() != player.getWorld().getUID()) {
+                bool.complete(false);
+                return;
+            }
+
             if (man.getLocation().distance(player.getLocation()) < 50) {
                 bool.complete(true);
             }

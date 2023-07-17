@@ -15,8 +15,12 @@ import lombok.val;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class MenuUI extends GUI {
 
@@ -34,10 +38,11 @@ public class MenuUI extends GUI {
     @Override
     public void generateGUI(Player player) {
 
-        set(12, new ItemBuilder(Material.CLOCK)
-                .displayName(Component.text("Spiel starten")), (clickedPlayer, itemStack, clickType) -> {
+        val language = new NetworkPlayer(game.getDatabase(), player.getUniqueId()).getLanguage();
 
-            val language = new NetworkPlayer(game.getDatabase(), clickedPlayer.getUniqueId()).getLanguage();
+        set(12, new ItemBuilder(Material.CLOCK)
+                .lore(getLore(language, "game.ui.game.start.lore"))
+                .displayName(game.getMsgApi().getTranslation(language, "game.ui.game.start.displayname")), (clickedPlayer, itemStack, clickType) -> {
 
             if (teamHandler.isPlayerHunter(clickedPlayer.getUniqueId())) {
                 clickedPlayer.playSound(Sound.sound(Key.key("minecraft:entity.villager.no"), Sound.Source.MASTER, 30f, 1f));
@@ -52,13 +57,12 @@ public class MenuUI extends GUI {
 
             game.loadPhase(GameState.STARTING);
 
-            return GUIItem.GUIAction.CANCEL;
+            return GUIItem.GUIAction.CLOSE;
         });
 
         set(14, new ItemBuilder(Material.LECTERN)
-                .displayName(Component.text("Rollen")), (clickedPlayer, itemStack, clickType) -> {
-
-            val language = new NetworkPlayer(game.getDatabase(), clickedPlayer.getUniqueId()).getLanguage();
+                .lore(getLore(language, "game.ui.game.role.lore"))
+                .displayName(game.getMsgApi().getTranslation(language, "game.ui.game.role.displayname")), (clickedPlayer, itemStack, clickType) -> {
 
             if (this.teamHandler.isPlayerHunter(clickedPlayer.getUniqueId())) {
                 clickedPlayer.playSound(Sound.sound(Key.key("minecraft:entity.villager.no"), Sound.Source.MASTER, 30f, 1f));
@@ -66,10 +70,25 @@ public class MenuUI extends GUI {
                 return GUIItem.GUIAction.CANCEL;
             }
 
-                Manhunt.getINSTANCE().getGuiHandler().openDelayed(clickedPlayer, new RoleUI(clickedPlayer, Component.text("Rollen"), teamHandler, this.gameTeamHandler), CloseReason.NEW_UI);
-            return GUIItem.GUIAction.CANCEL;
+                Manhunt.getINSTANCE().getGuiHandler().openDelayed(clickedPlayer, new RoleUI(clickedPlayer, game.getMsgApi().getTranslation(language, "game.ui.game.role.title"), teamHandler, this.gameTeamHandler, game), CloseReason.NEW_UI);
+            return GUIItem.GUIAction.CANCEL_AND_NEW;
         });
 
+    }
+
+    private ArrayList<Component> getLore(String language, String key) {
+
+        val translation = game.getMsgApi().getRaw(language, key);
+        val split = translation.rawTranslation().split(";");
+
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+        ArrayList<Component> components = new ArrayList<>();
+
+        for (String s : split) {
+            components.add(miniMessage.deserialize(s).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        }
+
+        return components;
     }
 
     @Override

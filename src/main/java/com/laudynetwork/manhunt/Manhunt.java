@@ -42,7 +42,6 @@ public class Manhunt extends JavaPlugin {
         val pm = Bukkit.getPluginManager();
 
         val itemHandler = new WaitingItemHandler(game);
-        pm.registerEvents(itemHandler, this);
         this.game.onLoad();
     }
 

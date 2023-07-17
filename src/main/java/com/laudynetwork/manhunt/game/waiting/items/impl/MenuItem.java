@@ -9,12 +9,18 @@ import com.laudynetwork.manhunt.game.waiting.items.impl.menu.MenuUI;
 import com.laudynetwork.manhunt.team.TeamHandler;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemBuilder;
 import com.laudynetwork.networkutils.api.item.itembuilder.ItemStackBuilder;
+import com.laudynetwork.networkutils.api.player.NetworkPlayer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import java.util.ArrayList;
+
 @RequiredArgsConstructor
 
 public class MenuItem implements WaitingItem {
@@ -29,9 +35,27 @@ public class MenuItem implements WaitingItem {
     }
 
     @Override
-    public ItemStackBuilder<?> item() {
+    public ItemStackBuilder<?> item(Player player) {
+        val language = new NetworkPlayer(game.getDatabase(), player.getUniqueId()).getLanguage();
+
         return new ItemBuilder(Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE)
-                .displayName(Component.text("Menu").color(NamedTextColor.GRAY));
+                .lore(getLore(language, "game.item.lore"))
+                .displayName(game.getMsgApi().getTranslation(language, "game.item.displayname"));
+    }
+
+    private ArrayList<Component> getLore(String language, String key) {
+
+        val translation = game.getMsgApi().getRaw(language, key);
+        val split = translation.rawTranslation().split(";");
+
+        MiniMessage miniMessage = MiniMessage.miniMessage();
+        ArrayList<Component> components = new ArrayList<>();
+
+        for (String s : split) {
+            components.add(miniMessage.deserialize(s).decoration(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+        }
+
+        return components;
     }
 
     @Override
@@ -46,8 +70,8 @@ public class MenuItem implements WaitingItem {
 
         player.setCooldown(Material.VEX_ARMOR_TRIM_SMITHING_TEMPLATE, 20 * 2);
 
-        Manhunt.getINSTANCE().getGuiHandler().open(player, new MenuUI(player, Component.text("Menu"), this.teamHandler, this.gameTeamHandler, this.game));
+        val language = new NetworkPlayer(game.getDatabase(), player.getUniqueId()).getLanguage();
 
-
+        Manhunt.getINSTANCE().getGuiHandler().open(player, new MenuUI(player, game.getMsgApi().getTranslation(language, "game.ui.game.title"), this.teamHandler, this.gameTeamHandler, this.game));
     }
 }
