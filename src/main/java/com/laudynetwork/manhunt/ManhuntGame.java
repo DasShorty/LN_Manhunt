@@ -21,6 +21,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -66,19 +67,32 @@ public class ManhuntGame extends Game {
             player.getInventory().clear();
 
             val language = new NetworkPlayer(this.database, player.getUniqueId()).getLanguage();
-
             event.joinMessage(Component.empty());
-            broadCast("game.join", language, Placeholder.unparsed("player", player.getName()));
 
-            if (player.hasPermission("manhunt.man") && this.teamHandler.isManTeamEmpty()) {
-                this.teamHandler.playerTeam("man", player, this.gameTeamHandler);
-                player.sendMessage(this.msgApi.getMessage(language, "role.man"));
-            } else {
-                this.teamHandler.playerTeam("hunters", player, this.gameTeamHandler);
-                player.sendMessage(this.msgApi.getMessage(language, "role.hunter"));
-            }
 
-            addHotBarItems(player);
+            if (getCurrentState() == GameState.WAITING) {
+
+                broadCast("game.join", language, Placeholder.unparsed("player", player.getName()));
+
+                if (player.hasPermission("manhunt.man") && this.teamHandler.isManTeamEmpty()) {
+                    this.teamHandler.playerTeam("man", player, this.gameTeamHandler);
+                    player.sendMessage(this.msgApi.getMessage(language, "role.man"));
+                } else {
+                    this.teamHandler.playerTeam("hunters", player, this.gameTeamHandler);
+                    player.sendMessage(this.msgApi.getMessage(language, "role.hunter"));
+                }
+
+                addHotBarItems(player);
+            } else if (player.hasPermission("game.manhunt.join")) {
+
+                player.setGameMode(GameMode.SPECTATOR);
+
+            } else
+                player.kick(msgApi.getMessage(language, "game.running"));
+
+
+
+
 
         });
 
