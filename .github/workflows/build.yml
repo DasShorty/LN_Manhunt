@@ -16,7 +16,9 @@ jobs:
             java-version: 17
             distribution: zulu
       -   name: Build with Gradle
-          run: ./gradlew translations build --refresh-dependencies
+          run: |
+            chmod 777 gradlew
+            ./gradlew translations build --refresh-dependencies
           env:
             NEXUS_USER: ${{ secrets.NEXUS_USER }}
             NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
