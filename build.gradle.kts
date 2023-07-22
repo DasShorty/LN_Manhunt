@@ -41,7 +41,7 @@ dependencies {
         exclude(group = "org.mongodb", module = "mongodb-driver-sync")
     }
 
-    compileOnly("org.mongodb:mongodb-driver-sync:4.10.1")
+    compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
     compileOnly("com.laudynetwork:database:latest")
     compileOnly("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
