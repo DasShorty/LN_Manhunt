@@ -48,7 +48,7 @@ jobs:
             username: ${{ secrets.SFTP_USER }}
             password: ${{ secrets.SFTP_PWD }}
             port: 22
-            uploads: ./build/dist/ => /home/simplecloud/templates/Manhunt/plugins
+            uploads: ./build/libs/ => /home/simplecloud/templates/Manhunt/plugins
             ignore: |
               *.git
               */**/*git*

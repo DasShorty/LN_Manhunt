@@ -2,16 +2,13 @@ package com.laudynetwork.manhunt;
 
 import com.laudynetwork.gameengine.game.backend.GameDataHandler;
 import com.laudynetwork.manhunt.game.waiting.items.WaitingItemHandler;
-import com.laudynetwork.manhunt.scoreboard.ManhuntBoard;
 import com.laudynetwork.networkutils.api.gui.GUIHandler;
 import com.laudynetwork.networkutils.api.messanger.backend.MessageCache;
 import com.laudynetwork.networkutils.api.tablist.TablistManager;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -49,8 +46,6 @@ public class Manhunt extends JavaPlugin {
         val itemHandler = new WaitingItemHandler(game);
         this.game.onLoad();
 
-        val scoreboardLibrary = ScoreboardLibrary.loadScoreboardLibrary(this);
-        new ManhuntBoard(scoreboardLibrary);
     }
 
     @Override

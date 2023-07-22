@@ -1,3 +1,4 @@
+import org.gradle.internal.impldep.com.google.common.io.Files
 import java.io.FileOutputStream
 
 plugins {
@@ -7,7 +8,7 @@ plugins {
 }
 
 group = "com.laudynetwork.manhunt"
-version = "1.0-SNAPSHOT"
+version = "latest"
 description = "LaudyNetwork Game Manhunt"
 
 repositories {
@@ -30,29 +31,38 @@ repositories {
 }
 
 dependencies {
+
     implementation("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
 
     paperweight.paperDevBundle("1.20-R0.1-SNAPSHOT")
+
+    // LN related api
 
     compileOnly("com.laudynetwork:networkutils:latest") {
         exclude(group = "eu.thesimplecloud.simplecloud", module = "simplecloud-api")
         exclude(group = "com.laudynetwork", module = "database")
         exclude(group = "org.mongodb", module = "mongodb-driver-sync")
     }
-
-    compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
     compileOnly("com.laudynetwork:database:latest")
+    compileOnly("com.laudynetwork:gameengine:latest")
+
     compileOnly("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0")
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
 
-    implementation("com.laudynetwork:gameengine:latest")
+    compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
 
+    // SB
+    val scoreboardLibraryVersion = "2.0.0-RC9"
+    implementation("com.github.megavexnetwork.scoreboard-library:scoreboard-library-api:$scoreboardLibraryVersion")
+    runtimeOnly("com.github.megavexnetwork.scoreboard-library:scoreboard-library-implementation:$scoreboardLibraryVersion")
 
-    val scoreboardLibraryVersion = "2.0.0-RC10"
-    implementation("com.github.MegavexNetwork.scoreboard-library:scoreboard-library-api:$scoreboardLibraryVersion")
-    runtimeOnly("com.github.MegavexNetwork.scoreboard-library:scoreboard-library-packetevents:$scoreboardLibraryVersion")
+    // SB: packet adapter
+    runtimeOnly("com.github.megavexnetwork.scoreboard-library:scoreboard-library-v1_20_R1:$scoreboardLibraryVersion")
+    runtimeOnly("com.github.megavexnetwork.scoreboard-library:scoreboard-library-packetevents:$scoreboardLibraryVersion")
+
 }
+
 tasks {
     // Configure reobfJar to run when invoking the build task
     assemble {
@@ -61,8 +71,25 @@ tasks {
 
     shadowJar {
         dependencies {
-            exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
+
+            // exclude LN related stuff
             exclude(dependency("com.laudynetwork:gameengine:latest"))
+            exclude(dependency("com.laudynetwork:networkutils:latest"))
+            exclude(dependency("com.laudynetwork:database:latest"))
+
+            // 3'trd layer api
+            exclude(dependency("org.mongodb:mongodb-driver-sync:4.10.2"))
+            exclude(dependency("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT"))
+
+            // exclude simple cloud
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-api:2.5.0"))
+            exclude(dependency("eu.thesimplecloud.clientserverapi:clientserverapi:4.1.17"))
+            exclude(dependency("eu.thesimplecloud.jsonlib:json-lib:1.0.10"))
+            exclude(dependency("eu.thesimplecloud.simplecloud:simplecloud-runner:2.5.0"))
+        }
+
+        doLast {
+            //file(layout.buildDirectory.file("libs/Manhunt-latest-dev-all.jar")).delete()
         }
     }
 
