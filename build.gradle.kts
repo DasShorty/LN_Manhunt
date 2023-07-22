@@ -47,6 +47,11 @@ dependencies {
     compileOnly("com.comphenix.protocol:ProtocolLib:5.0.0-SNAPSHOT")
 
     implementation("com.laudynetwork:gameengine:latest")
+
+
+    val scoreboardLibraryVersion = "2.0.0-RC10"
+    implementation("com.github.MegavexNetwork.scoreboard-library:scoreboard-library-api:$scoreboardLibraryVersion")
+    runtimeOnly("com.github.MegavexNetwork.scoreboard-library:scoreboard-library-packetevents:$scoreboardLibraryVersion")
 }
 tasks {
     // Configure reobfJar to run when invoking the build task

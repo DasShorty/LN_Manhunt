@@ -2,6 +2,7 @@ package com.laudynetwork.manhunt.team;
 
 import com.laudynetwork.gameengine.game.GameTeamHandler;
 import com.laudynetwork.manhunt.Manhunt;
+import com.laudynetwork.networkutils.api.resourcePackAPI.ResourcePackAPI;
 import lombok.Getter;
 import lombok.val;
 import net.kyori.adventure.text.Component;
@@ -23,8 +24,8 @@ public class TeamHandler {
     private final Map<String, List<UUID>> teams = new HashMap<>();
 
     public TeamHandler() {
-        this.huntersData = new TeamData("hunters", Component.empty(), Component.empty(), NamedTextColor.RED);
-        this.manData = new TeamData("man", Component.empty(), Component.empty(), NamedTextColor.GREEN);
+        this.huntersData = new TeamData("hunters", Component.text(ResourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.RED);
+        this.manData = new TeamData("man", Component.text(ResourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.GREEN);
     }
 
     public int getHuntersCount() {

@@ -14,7 +14,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -96,9 +95,8 @@ public class RunningPhase implements GamePhase {
 
             });
 
-            if (game.getTeamHandler().isManTeamEmpty()) {
+            if (game.getTeamHandler().isManTeamEmpty())
                 game.loadPhase(GameState.ENDING);
-            }
 
 
         });

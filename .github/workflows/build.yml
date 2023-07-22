@@ -1,0 +1,61 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [ '**' ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+      -   name: Checkout code
+          uses: actions/checkout@v3
+      -   name: Set up JDK 17
+          uses: actions/setup-java@v3
+          with:
+            java-version: 17
+            distribution: zulu
+      -   name: Build with Gradle
+          run: ./gradlew translations build --refresh-dependencies
+          env:
+            NEXUS_USER: ${{ secrets.NEXUS_USER }}
+            NEXUS_PWD: ${{ secrets.NEXUS_PWD }}
+            TOLGEE_TOKEN_PLUGIN: ${{ secrets.TOLGEE_TOKEN_PLUGIN }}
+            TOLGEE_TOKEN_GENERAL: ${{ secrets.TOLGEE_TOKEN_GENERAL }}
+      -   name: Upload Artifacts
+          uses: actions/upload-artifact@v3
+          if: github.ref == 'refs/heads/main'
+          with:
+            name: data
+            path: |
+              ./build/dist/
+
+  deploy:
+    runs-on: self-hosted
+    if: github.ref == 'refs/heads/main'
+    needs: [ build ]
+    steps:
+      -   name: Load Artifacts
+          uses: actions/download-artifact@v3
+          with:
+            name: data
+      -   name: Upload to Server
+          uses: Dylan700/sftp-upload-action@latest
+          with:
+            server: ${{ secrets.SFTP_HOST }}
+            username: ${{ secrets.SFTP_USER }}
+            password: ${{ secrets.SFTP_PWD }}
+            port: 22
+            uploads: ./build/dist/ => /home/simplecloud/templates/Manhunt/plugins
+            ignore: |
+              *.git
+              */**/*git*
+
+  cleanup:
+    runs-on: self-hosted
+    needs: [ deploy ]
+    steps:
+      -   name: Delete Artifacts
+          uses: GeekyEggo/delete-artifact@v2
+          with:
+            name: data
