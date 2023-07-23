@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.val;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
@@ -22,13 +21,11 @@ public class TeamHandler {
     @Getter
     private final NamespacedKey gameRoleKey = new NamespacedKey(Manhunt.getINSTANCE(), "manhunt-role");
 
-    private final ResourcePackAPI resourcePackAPI = Bukkit.getServicesManager().getRegistration(ResourcePackAPI.class).getProvider();
-
     private final Map<String, List<UUID>> teams = new HashMap<>();
 
     public TeamHandler() {
-        this.huntersData = new TeamData("hunters", Component.text(resourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.RED);
-        this.manData = new TeamData("man", Component.text(resourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.GREEN);
+        this.huntersData = new TeamData("hunters", Component.text(ResourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.RED);
+        this.manData = new TeamData("man", Component.text(ResourcePackAPI.convert("{gameModeBadges:hunter}")), Component.empty(), NamedTextColor.GREEN);
     }
 
     public int getHuntersCount() {
