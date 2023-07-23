@@ -53,7 +53,7 @@ dependencies {
     compileOnly("org.mongodb:mongodb-driver-sync:4.10.2")
 
     // SB
-    val scoreboardLibraryVersion = "2.0.0-RC9"
+    val scoreboardLibraryVersion = "2.0.0-RC10"
     implementation("com.github.megavexnetwork.scoreboard-library:scoreboard-library-api:$scoreboardLibraryVersion")
     runtimeOnly("com.github.megavexnetwork.scoreboard-library:scoreboard-library-implementation:$scoreboardLibraryVersion")
 
